@@ -1,5 +1,10 @@
 {
   "name": "Telenot BuildSec",
   "homeassistant": "2025.2.0",
-  "render_readme": true
+  "render_readme": true,
+  "country": [
+    "DE",
+    "AT",
+    "CH"
+  ]
 }
