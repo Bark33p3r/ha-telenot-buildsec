@@ -1,0 +1,16 @@
+name: Funktionswunsch / Feature request
+description: Idee für eine neue Funktion / Idea for a new feature
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Beschreibung / Description
+      description: Was soll die Integration können und wofür brauchst du das? / What should the integration do and why do you need it?
+    validations:
+      required: true
+  - type: input
+    id: panel
+    attributes:
+      label: Zentrale und Firmware / Panel and firmware
+      placeholder: complex 400H, Firmware 38.88

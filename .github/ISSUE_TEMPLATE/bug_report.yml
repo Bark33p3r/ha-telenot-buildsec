@@ -1,0 +1,71 @@
+name: Fehler melden / Bug report
+description: Etwas funktioniert nicht wie erwartet / Something does not work as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Bitte beschreibe das Problem so genau wie möglich und füge immer ein Debug-Log an.** Issues ohne Debug-Log können meist nicht bearbeitet werden.
+        *Please describe the problem as precisely as possible and always attach a debug log.*
+
+        **So erstellst du ein Debug-Log / How to get a debug log:**
+        1. Einstellungen → Geräte & Dienste → Telenot BuildSec → ⋮ → **Debug-Protokollierung aktivieren**
+        2. Das Problem nachstellen / Reproduce the problem
+        3. ⋮ → **Debug-Protokollierung deaktivieren**: Die Log-Datei wird heruntergeladen / the log file is downloaded
+
+        ⚠️ **Das Debug-Log enthält deinen Bedienteilcode als Tastencodes und den Freischaltcode. Entferne beides vor dem Hochladen!**
+        *The debug log contains your keypad code (as key codes) and activation code. Remove them before uploading!*
+  - type: textarea
+    id: description
+    attributes:
+      label: Problembeschreibung / Description
+      description: Was ist passiert? Was hast du erwartet? / What happened? What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Schritte zum Nachstellen / Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version der Integration / Integration version
+      placeholder: "1.1.0"
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home-Assistant-Version
+      placeholder: "2026.11.2"
+    validations:
+      required: true
+  - type: input
+    id: panel
+    attributes:
+      label: Zentrale und Firmware / Panel and firmware
+      description: z. B. / e.g. complex 400H, Firmware 38.88, IP-Modul
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Debug-Log
+      description: Log hier einfügen oder als Datei anhängen / Paste the log here or attach it as a file
+      render: text
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Bestätigung / Confirmation
+      options:
+        - label: Ich habe Bedienteilcode und Freischaltcode aus dem Log entfernt. / I removed my keypad code and activation code from the log.
+          required: true
+        - label: Ich habe geprüft, dass es zu dem Problem noch kein offenes Issue gibt. / I checked that there is no open issue for this problem yet.
+          required: true
