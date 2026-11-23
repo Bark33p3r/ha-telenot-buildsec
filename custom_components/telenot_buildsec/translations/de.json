@@ -1,0 +1,116 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Telenot BuildSec",
+        "description": "Verbindungsdaten wie in der BuildSec-App (Gerät → Bearbeiten). Während Home Assistant verbunden ist, kann sich die App nicht gleichzeitig verbinden.",
+        "data": {
+          "host": "IP-Adresse der Alarmanlage",
+          "port": "Port",
+          "freischaltcode": "Freischaltcode (16 Hex-Zeichen)",
+          "bedienteilcode": "Bedienteilcode",
+          "bedienteil_adresse": "Bedienteiladresse (0–15)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Keine Verbindung möglich (IP/Port prüfen).",
+      "busy": "Der Fernzugriff ist belegt – bitte die BuildSec-App schließen und erneut versuchen.",
+      "invalid_freischaltcode": "Die Anlage akzeptiert den Freischaltcode nicht.",
+      "invalid_freischaltcode_format": "Der Freischaltcode muss aus genau 16 Hex-Zeichen bestehen.",
+      "invalid_code_format": "Der Bedienteilcode muss aus 1–6 Ziffern bestehen.",
+      "rejected": "Die Anlage hat die Anmeldung abgelehnt (Code, Bedienteiladresse oder Berechtigung prüfen – Details im Log).",
+      "unknown": "Unerwarteter Fehler – Details im Log."
+    },
+    "abort": {
+      "already_configured": "Diese Anlage ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Bedienung",
+        "description": "Tastenfolgen wie am Bedienteil: Ziffern, A (Unscharf), B (OK), E (Extern scharf), I (Intern scharf), S (Esc), +, -. {code} wird durch den eingegebenen Code ersetzt, {raw} sendet einen rohen Tastencode. Standard: SA{code}B / SI{code}B / SE{code}B.",
+        "data": {
+          "arm_away_keys": "Tastenfolge Extern scharf",
+          "arm_home_keys": "Tastenfolge Intern scharf (leer = aus)",
+          "disarm_keys": "Tastenfolge Unscharf",
+          "away_led": "LED für Extern scharf",
+          "home_led": "LED für Intern scharf",
+          "code_required": "Code in Home Assistant abfragen"
+        }
+      }
+    }
+  },
+  "selector": {
+    "led_choice": {
+      "options": {
+        "auto": "Automatisch (nach Beschriftung)",
+        "none": "Keine",
+        "1": "LED 1",
+        "2": "LED 2",
+        "3": "LED 3",
+        "4": "LED 4"
+      }
+    }
+  },
+  "entity": {
+    "alarm_control_panel": {
+      "alarm": {
+        "name": "Alarmanlage"
+      }
+    },
+    "sensor": {
+      "display_line1": {
+        "name": "Display Zeile 1"
+      },
+      "display_line2": {
+        "name": "Display Zeile 2"
+      },
+      "buzzer": {
+        "name": "Summer"
+      },
+      "connection": {
+        "name": "Verbindung"
+      }
+    },
+    "binary_sensor": {
+      "led_alarm": {
+        "name": "Alarm"
+      },
+      "led_stoerung": {
+        "name": "Störung"
+      },
+      "led_betrieb": {
+        "name": "Betrieb"
+      },
+      "led_gehtest": {
+        "name": "Gehtest"
+      },
+      "led_n": {
+        "name": "LED {n}"
+      }
+    },
+    "switch": {
+      "keep_connected": {
+        "name": "Verbindung halten"
+      }
+    }
+  },
+  "services": {
+    "send_keys": {
+      "name": "Tasten senden",
+      "description": "Drückt eine Tastenfolge am virtuellen Bedienteil.",
+      "fields": {
+        "keys": {
+          "name": "Tasten",
+          "description": "z. B. SA1234B (Esc, Unscharf, Code, OK)"
+        },
+        "config_entry_id": {
+          "name": "Anlage",
+          "description": "Nur nötig, wenn mehrere Anlagen eingerichtet sind."
+        }
+      }
+    }
+  }
+}

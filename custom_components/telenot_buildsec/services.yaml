@@ -1,0 +1,12 @@
+send_keys:
+  fields:
+    keys:
+      required: true
+      example: "SA1234B"
+      selector:
+        text:
+    config_entry_id:
+      required: false
+      selector:
+        config_entry:
+          integration: telenot_buildsec
