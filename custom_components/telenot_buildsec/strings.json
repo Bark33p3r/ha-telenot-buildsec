@@ -1,0 +1,116 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Telenot BuildSec",
+        "description": "Connection data as in the BuildSec app (device → edit). While Home Assistant is connected, the app cannot connect at the same time.",
+        "data": {
+          "host": "IP address of the alarm panel",
+          "port": "Port",
+          "freischaltcode": "Activation code (Freischaltcode, 16 hex characters)",
+          "bedienteilcode": "Keypad code",
+          "bedienteil_adresse": "Keypad address (0–15)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect (check IP/port).",
+      "busy": "Remote access is in use – close the BuildSec app and try again.",
+      "invalid_freischaltcode": "The panel does not accept the activation code.",
+      "invalid_freischaltcode_format": "The activation code must be exactly 16 hex characters.",
+      "invalid_code_format": "The keypad code must be 1–6 digits.",
+      "rejected": "The panel rejected the login (check code, keypad address or permission – details in the log).",
+      "unknown": "Unexpected error – details in the log."
+    },
+    "abort": {
+      "already_configured": "This panel is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Operation",
+        "description": "Key sequences as on the keypad: digits, A (disarm), B (OK), E (arm away / extern), I (arm home / intern), S (Esc), +, -. {code} is replaced by the entered code, {raw} sends a raw key code. Default: SA{code}B / SI{code}B / SE{code}B.",
+        "data": {
+          "arm_away_keys": "Key sequence arm away (extern scharf)",
+          "arm_home_keys": "Key sequence arm home (intern scharf, empty = off)",
+          "disarm_keys": "Key sequence disarm",
+          "away_led": "LED for arm away",
+          "home_led": "LED for arm home",
+          "code_required": "Ask for the code in Home Assistant"
+        }
+      }
+    }
+  },
+  "selector": {
+    "led_choice": {
+      "options": {
+        "auto": "Automatic (by label)",
+        "none": "None",
+        "1": "LED 1",
+        "2": "LED 2",
+        "3": "LED 3",
+        "4": "LED 4"
+      }
+    }
+  },
+  "entity": {
+    "alarm_control_panel": {
+      "alarm": {
+        "name": "Alarm panel"
+      }
+    },
+    "sensor": {
+      "display_line1": {
+        "name": "Display line 1"
+      },
+      "display_line2": {
+        "name": "Display line 2"
+      },
+      "buzzer": {
+        "name": "Buzzer"
+      },
+      "connection": {
+        "name": "Connection"
+      }
+    },
+    "binary_sensor": {
+      "led_alarm": {
+        "name": "Alarm"
+      },
+      "led_stoerung": {
+        "name": "Fault"
+      },
+      "led_betrieb": {
+        "name": "Power"
+      },
+      "led_gehtest": {
+        "name": "Walk test"
+      },
+      "led_n": {
+        "name": "LED {n}"
+      }
+    },
+    "switch": {
+      "keep_connected": {
+        "name": "Keep connection"
+      }
+    }
+  },
+  "services": {
+    "send_keys": {
+      "name": "Send keys",
+      "description": "Presses a key sequence on the virtual keypad.",
+      "fields": {
+        "keys": {
+          "name": "Keys",
+          "description": "e.g. SA1234B (Esc, disarm, code, OK)"
+        },
+        "config_entry_id": {
+          "name": "Panel",
+          "description": "Only needed if several panels are configured."
+        }
+      }
+    }
+  }
+}

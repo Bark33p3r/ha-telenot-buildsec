@@ -1,0 +1,17 @@
+{
+  "domain": "telenot_buildsec",
+  "name": "Telenot BuildSec",
+  "codeowners": [
+    "@Bark33p3r"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/Bark33p3r/ha-telenot-buildsec",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/Bark33p3r/ha-telenot-buildsec/issues",
+  "loggers": [
+    "custom_components.telenot_buildsec"
+  ],
+  "requirements": [],
+  "version": "1.0.0"
+}
