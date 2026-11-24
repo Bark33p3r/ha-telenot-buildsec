@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 import os
 import struct
 import sys
@@ -169,8 +170,13 @@ def check_no_code_in_log(lines: list[str]) -> None:
     kennwort = encode_kennwort(CODE).hex(" ")
     tx = [line for line in lines if line.startswith("TX")]
     assert tx, "no TX lines captured"
+    rx = [line for line in lines if line.startswith("RX Nutzdaten")]
+    assert rx, "no RX Nutzdaten lines captured"
+    assert any("ce xx" in line for line in rx), "key acknowledge not masked"
     for line in lines:
         assert kennwort not in line, f"encoded code in log: {line}"
+        assert "data=" not in line, f"telegram payload in log: {line}"
+        assert not re.search(r"\bce 3[0-9]\b", line), f"key acknowledge digit in log: {line}"
         assert "data=" not in line or not line.startswith("TX"), f"TX payload in log: {line}"
         for digit in CODE:
             assert f"0x{0x30 + int(digit):02X}" not in line, f"key code in log: {line}"
