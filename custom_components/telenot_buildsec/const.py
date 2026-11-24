@@ -1,7 +1,7 @@
 """Constants for Telenot BuildSec."""
 
 DOMAIN = "telenot_buildsec"
-VERSION = "1.0.0"
+VERSION = "1.1.1"
 
 CONF_FREISCHALTCODE = "freischaltcode"
 CONF_BEDIENTEILCODE = "bedienteilcode"
