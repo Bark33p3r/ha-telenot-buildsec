@@ -149,10 +149,47 @@ def iter_saetze(data: bytes):
         length = data[pos]
         end = pos + 2 + length
         if end > len(data):
-            _LOGGER.debug("Truncated Nutzerdatensatz in %s", data.hex(" "))
+            _LOGGER.debug("Truncated Nutzerdatensatz (%d bytes)", len(data))
             return
         yield data[pos:end]
         pos = end
+
+
+def redact_nutzdaten(data: bytes) -> str:
+    """Hex dump of received Nutzdaten for the debug log.
+
+    Key acknowledge blocks echo the pressed key, i.e. one digit of the keypad
+    code per block when arming or disarming. Their data bytes are shown as "xx".
+    """
+    masked: set[int] = set()
+
+    def com2bus(block_start: int, block: bytes) -> None:
+        if block and block[0] == C_TASTENCODE_ACK:
+            masked.update(range(block_start + 1, block_start + len(block)))
+
+    pos = 0
+    while pos + 2 <= len(data):
+        end = pos + 2 + data[pos]
+        if end > len(data):
+            masked.update(range(pos, len(data)))
+            break
+        satz = data[pos:end]
+        if satz[1] == SATZTYP_DATENBLOCK_TRANSPARENT and len(satz) >= 4:
+            if satz[3] == K_COM2BUS_ANTWORT:
+                inner_start = pos + 5
+                inner = data[inner_start:end]
+                ipos = 0
+                while ipos + 2 <= len(inner):
+                    iend = ipos + 2 + inner[ipos]
+                    if iend > len(inner):
+                        masked.update(range(inner_start + ipos, end))
+                        break
+                    com2bus(inner_start + ipos + 1, inner[ipos + 1 : iend])
+                    ipos = iend
+        else:
+            com2bus(pos + 1, satz[1:])
+        pos = end
+    return " ".join("xx" if i in masked else f"{b:02x}" for i, b in enumerate(data))
 
 
 @dataclass
@@ -424,6 +461,8 @@ class BuildSecClient:
     def _handle_nutzdaten(self, data: bytes) -> None:
         if self.raw_listener:
             self.raw_listener("rx", data)
+        if _LOGGER.isEnabledFor(logging.DEBUG):
+            _LOGGER.debug("RX Nutzdaten %s", redact_nutzdaten(data))
         if len(data) == 1:
             return
         changed = False
