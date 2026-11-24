@@ -75,7 +75,7 @@ Bei den LEDs wählt „Automatisch“ die LED mit der Beschriftung „extern sch
 - Die Anlage erlaubt nur **eine** Fernverbindung gleichzeitig (HA *oder* BuildSec-App).
 - Getestet mit einer complex 400H (Firmware 38.88) und direkter LAN-Verbindung zum IP-Modul. hiXserver/Cloud wird nicht unterstützt.
 - Probleme bitte als [Issue](https://github.com/Bark33p3r/ha-telenot-buildsec/issues) melden, mit Debug-Log.
-  Das Log enthält keine Codes: Gesendete Telegramme werden nur mit Kopfdaten und Länge protokolliert.
+  Das Log enthält keine Codes: Gesendete Telegramme werden nur mit Kopfdaten und Länge protokolliert, Tastenbestätigungen der Anlage maskiert.
 
 ## Haftungsausschluss
 
