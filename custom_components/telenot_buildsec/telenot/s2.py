@@ -188,7 +188,9 @@ class Telegram:
 
     def __str__(self) -> str:
         # Header and length only: outgoing payloads contain the keypad code
-        # (login block, label request, key presses) and must never be logged.
+        # (login block, label request, key presses) and incoming key
+        # acknowledges echo every pressed key, so payloads are never logged here.
+        # Received Nutzdaten are logged redacted in buildsec.py.
         return (
             f"IK={self.ik} PK=0x{self.pk:02X} NK={self.nk} V={self.v} "
             f"TC={self.tc} RC={self.rc} len={len(self.data)}"
@@ -370,7 +372,7 @@ class S2Session:
         sync = decode_payload(KEY_PLAIN, payload, None)
         if sync is None or sync.ik != IK_SYNC_REQUEST:
             raise S2Error(f"expected SYNC_REQUEST, got {sync}")
-        _LOGGER.debug("RX %s data=%s", sync, sync.data.hex(" "))
+        _LOGGER.debug("RX %s", sync)
         self._check_window(sync)
         self._key = self._key_config.session_key(sync.tc)
         self._key_number = self._key_config.key_number
@@ -383,7 +385,7 @@ class S2Session:
             if key_number == KEY_PLAIN:
                 tel = decode_payload(KEY_PLAIN, payload, None)
                 if tel and tel.ik == IK_SYNC_REQUEST:
-                    _LOGGER.debug("RX (repeat) %s data=%s", tel, tel.data.hex(" "))
+                    _LOGGER.debug("RX (repeat) %s", tel)
                     self._check_window(tel)
                     repeats += 1
                     if repeats > 2:
@@ -402,7 +404,7 @@ class S2Session:
             tel = decode_payload(key_number, payload, self._key)
             if tel is None:
                 continue
-            _LOGGER.debug("RX %s data=%s", tel, tel.data.hex(" "))
+            _LOGGER.debug("RX %s", tel)
             if tel.ik in (IK_ERROR_UNKNOWN_IK, IK_ERROR_UNKNOWN_PK):
                 raise S2Error(f"panel reported protocol error IK={tel.ik}")
             if tel.ik != IK_POLLING:
@@ -471,7 +473,7 @@ class S2Session:
             tel = decode_payload(key_number, payload, self._key)
             if tel is None:
                 continue
-            _LOGGER.debug("RX %s data=%s", tel, tel.data.hex(" "))
+            _LOGGER.debug("RX %s", tel)
             if tel.ik == IK_SYNC_REQUEST:
                 raise S2Error("panel restarted the session")
             verdict = self._verify(tel)
@@ -519,7 +521,7 @@ class S2Session:
             try:
                 self._on_nutzdaten(tel.data)
             except Exception:  # noqa: BLE001
-                _LOGGER.exception("Error while handling Nutzdaten %s", tel.data.hex(" "))
+                _LOGGER.exception("Error while handling Nutzdaten (%d bytes)", len(tel.data))
 
     async def _run(self) -> None:
         error: Exception | None = None
