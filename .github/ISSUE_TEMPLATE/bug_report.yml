@@ -13,8 +13,8 @@ body:
         2. Das Problem nachstellen / Reproduce the problem
         3. ⋮ → **Debug-Protokollierung deaktivieren**: Die Log-Datei wird heruntergeladen / the log file is downloaded
 
-        ℹ️ Ab v1.2.0 enthält das Debug-Log weder Bedienteilcode noch Freischaltcode. Bitte vorher auf die aktuelle Version aktualisieren.
-        *From v1.2.0 on the debug log contains neither keypad code nor activation code. Please update first.*
+        ℹ️ Ab v1.2.1 enthält das Debug-Log weder Bedienteilcode noch Freischaltcode. Bitte vorher auf die aktuelle Version aktualisieren.
+        *From v1.2.1 on the debug log contains neither keypad code nor activation code. Please update first.*
   - type: textarea
     id: description
     attributes:
