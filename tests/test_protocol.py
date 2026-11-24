@@ -6,6 +6,7 @@ Run:  python tests/test_protocol.py
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 import struct
 import sys
@@ -153,7 +154,34 @@ class FakePanel:
         return []
 
 
+class _Capture(logging.Handler):
+    def __init__(self) -> None:
+        super().__init__(logging.DEBUG)
+        self.lines: list[str] = []
+
+    def emit(self, record: logging.LogRecord) -> None:
+        self.lines.append(record.getMessage())
+
+
+def check_no_code_in_log(lines: list[str]) -> None:
+    """The keypad code must never reach the log (login block, key presses)."""
+    assert lines, "no log output captured"
+    kennwort = encode_kennwort(CODE).hex(" ")
+    tx = [line for line in lines if line.startswith("TX")]
+    assert tx, "no TX lines captured"
+    for line in lines:
+        assert kennwort not in line, f"encoded code in log: {line}"
+        assert "data=" not in line or not line.startswith("TX"), f"TX payload in log: {line}"
+        for digit in CODE:
+            assert f"0x{0x30 + int(digit):02X}" not in line, f"key code in log: {line}"
+    print("log ok,", len(lines), "lines,", len(tx), "TX")
+
+
 async def test_session() -> None:
+    capture = _Capture()
+    log = logging.getLogger("telenot")
+    log.setLevel(logging.DEBUG)
+    log.addHandler(capture)
     panel = FakePanel()
     port = await panel.start()
     updates = []
@@ -178,6 +206,8 @@ async def test_session() -> None:
     await asyncio.sleep(0.2)
     assert panel.got_session_close
     print("session ok,", len(updates), "updates")
+    log.removeHandler(capture)
+    check_no_code_in_log(capture.lines)
 
     busy = FakePanel(busy=True)
     port = await busy.start()

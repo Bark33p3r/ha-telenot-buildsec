@@ -297,7 +297,7 @@ class BuildSecClient:
                 try:
                     await asyncio.wait_for(fut, 10)
                 except asyncio.TimeoutError:
-                    _LOGGER.debug("No key acknowledge for 0x%02X", code)
+                    _LOGGER.debug("No key acknowledge from the panel")  # key code not logged (may be a code digit)
                 finally:
                     self._waiters.pop("ack", None)
 

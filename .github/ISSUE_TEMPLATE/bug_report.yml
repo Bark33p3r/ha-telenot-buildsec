@@ -13,8 +13,8 @@ body:
         2. Das Problem nachstellen / Reproduce the problem
         3. ⋮ → **Debug-Protokollierung deaktivieren**: Die Log-Datei wird heruntergeladen / the log file is downloaded
 
-        ⚠️ **Das Debug-Log enthält deinen Bedienteilcode als Tastencodes und den Freischaltcode. Entferne beides vor dem Hochladen!**
-        *The debug log contains your keypad code (as key codes) and activation code. Remove them before uploading!*
+        ℹ️ Ab v1.2.0 enthält das Debug-Log weder Bedienteilcode noch Freischaltcode. Bitte vorher auf die aktuelle Version aktualisieren.
+        *From v1.2.0 on the debug log contains neither keypad code nor activation code. Please update first.*
   - type: textarea
     id: description
     attributes:
@@ -65,7 +65,7 @@ body:
     attributes:
       label: Bestätigung / Confirmation
       options:
-        - label: Ich habe Bedienteilcode und Freischaltcode aus dem Log entfernt. / I removed my keypad code and activation code from the log.
+        - label: Ich nutze die aktuelle Version der Integration. / I am using the latest version of the integration.
           required: true
         - label: Ich habe geprüft, dass es zu dem Problem noch kein offenes Issue gibt. / I checked that there is no open issue for this problem yet.
           required: true

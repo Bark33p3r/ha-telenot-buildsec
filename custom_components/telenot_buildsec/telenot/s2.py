@@ -187,9 +187,11 @@ class Telegram:
         raise S2Error(f"unknown PK 0x{pk:02X}")
 
     def __str__(self) -> str:
+        # Header and length only: outgoing payloads contain the keypad code
+        # (login block, label request, key presses) and must never be logged.
         return (
             f"IK={self.ik} PK=0x{self.pk:02X} NK={self.nk} V={self.v} "
-            f"TC={self.tc} RC={self.rc} data={self.data.hex(' ')}"
+            f"TC={self.tc} RC={self.rc} len={len(self.data)}"
         )
 
 
@@ -350,7 +352,7 @@ class S2Session:
 
     async def _write(self, telegram: Telegram) -> None:
         assert self._writer
-        _LOGGER.debug("TX %s", telegram)
+        _LOGGER.debug("TX %s", telegram)  # never log the payload, see Telegram.__str__
         self._writer.write(encode_frame(telegram, self._key_number, self._key))
         await self._writer.drain()
 
@@ -368,7 +370,7 @@ class S2Session:
         sync = decode_payload(KEY_PLAIN, payload, None)
         if sync is None or sync.ik != IK_SYNC_REQUEST:
             raise S2Error(f"expected SYNC_REQUEST, got {sync}")
-        _LOGGER.debug("RX %s", sync)
+        _LOGGER.debug("RX %s data=%s", sync, sync.data.hex(" "))
         self._check_window(sync)
         self._key = self._key_config.session_key(sync.tc)
         self._key_number = self._key_config.key_number
@@ -381,7 +383,7 @@ class S2Session:
             if key_number == KEY_PLAIN:
                 tel = decode_payload(KEY_PLAIN, payload, None)
                 if tel and tel.ik == IK_SYNC_REQUEST:
-                    _LOGGER.debug("RX (repeat) %s", tel)
+                    _LOGGER.debug("RX (repeat) %s data=%s", tel, tel.data.hex(" "))
                     self._check_window(tel)
                     repeats += 1
                     if repeats > 2:
@@ -400,7 +402,7 @@ class S2Session:
             tel = decode_payload(key_number, payload, self._key)
             if tel is None:
                 continue
-            _LOGGER.debug("RX %s", tel)
+            _LOGGER.debug("RX %s data=%s", tel, tel.data.hex(" "))
             if tel.ik in (IK_ERROR_UNKNOWN_IK, IK_ERROR_UNKNOWN_PK):
                 raise S2Error(f"panel reported protocol error IK={tel.ik}")
             if tel.ik != IK_POLLING:
@@ -469,7 +471,7 @@ class S2Session:
             tel = decode_payload(key_number, payload, self._key)
             if tel is None:
                 continue
-            _LOGGER.debug("RX %s", tel)
+            _LOGGER.debug("RX %s data=%s", tel, tel.data.hex(" "))
             if tel.ik == IK_SYNC_REQUEST:
                 raise S2Error("panel restarted the session")
             verdict = self._verify(tel)
